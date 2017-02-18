@@ -9,9 +9,11 @@ import (
 	"log"
 	"net"
 	"os"
+	"os/signal"
 	"path/filepath"
 	"strings"
 	"sync"
+	"syscall"
 	"time"
 
 	"github.com/artyom/autoflags"
@@ -46,6 +48,12 @@ func do(addr, dir string, size int, maxAge time.Duration) error {
 		return err
 	}
 	defer ln.Close()
+	sigCh := make(chan os.Signal, 1)
+	signal.Notify(sigCh, os.Interrupt, syscall.SIGTERM)
+	go func() {
+		logger.Println(<-sigCh)
+		ln.Close()
+	}()
 	s := &srv{dir: dir, max: size}
 	defer s.finish()
 	if maxAge > 0 {
