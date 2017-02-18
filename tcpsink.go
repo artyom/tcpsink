@@ -10,6 +10,7 @@ import (
 	"net"
 	"os"
 	"path/filepath"
+	"strings"
 	"sync"
 	"time"
 
@@ -167,11 +168,12 @@ func cleanOld(ctx context.Context, dir string, maxAge time.Duration) {
 			return
 		case t := <-ticker.C:
 			fn := func(path string, info os.FileInfo, err error) error {
-				// TODO: make sure we don't descend into
-				// subdirectories & match files so we don't
-				// accidentally remove something that donesn't
-				// belong to us
-				if err != nil || !info.Mode().IsRegular() {
+				if info.IsDir() && path != dir {
+					// don't descend into subdirs
+					return filepath.SkipDir
+				}
+				if err != nil || !info.Mode().IsRegular() ||
+					!strings.Contains(path, ".log.sz") {
 					return nil
 				}
 				// TODO: filepath.Walk walks tree in
