@@ -109,7 +109,7 @@ func (s *srv) writeMessage(msg []byte) error {
 			return err
 		}
 	}
-	n, err := s.w.Write(msg)
+	n, err := s.w.Write(append(msg, '\n'))
 	s.n += n
 	if s.n > s.max || err != nil {
 		_ = s.rotate(err != nil) // TODO: log error?
