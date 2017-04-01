@@ -5,7 +5,6 @@ package main
 import (
 	"context"
 	"encoding/json"
-	"flag"
 	"io"
 	"io/ioutil"
 	"log"
@@ -33,8 +32,7 @@ func main() {
 		Dir:  "/tmp/logs",
 		Size: 16 << 20,
 	}
-	autoflags.Define(&args)
-	flag.Parse()
+	autoflags.Parse(&args)
 	if err := do(args.Addr, args.Dir, args.Size, args.Age); err != nil {
 		log.Fatal(err)
 	}
