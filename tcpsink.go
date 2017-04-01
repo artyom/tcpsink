@@ -1,3 +1,5 @@
+// Command tcpsink implements TCP server storing incoming stream of json
+// messages to snappy-compressed files.
 package main
 
 import (
@@ -24,7 +26,7 @@ func main() {
 	args := struct {
 		Addr string        `flag:"addr,address to listen"`
 		Dir  string        `flag:"dir,directory to write logs to"`
-		Size int           `flag:"size"`
+		Size int           `flag:"size,maximum file size in bytes (split on message boundary)"`
 		Age  time.Duration `flag:"age,remove logs older than this value"`
 	}{
 		Addr: "localhost:9000",
